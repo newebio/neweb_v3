@@ -1,0 +1,46 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const ReactDOM = require("react-dom");
+const SocketIO = require("socket.io-client");
+const App_1 = require("./App");
+const ModulesManager_1 = require("./ModulesManager");
+const Renderer_1 = require("./Renderer");
+const logger = console;
+class Bootstrap {
+    start(initialInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const modulesManager = new ModulesManager_1.default({
+                address: window.location.protocol + "//" + window.location.host + "/modules",
+            });
+            yield modulesManager
+                .preloadModules(initialInfo
+                .page.frames.reduce((prev, curr) => prev.concat(curr.modules), []));
+            const app = new App_1.default({
+                initialPage: initialInfo.page,
+                server: SocketIO(window.location.protocol + "//" + window.location.host),
+            });
+            const renderer = new Renderer_1.default({
+                dispatch: (frameId, ...args) => app.dispatchFrameAction(frameId, ...args),
+                resolveFrameView: (name, version, modules) => __awaiter(this, void 0, void 0, function* () {
+                    yield modulesManager.preloadModules(modules);
+                    const mod = yield modulesManager.loadModule("local", "frames/" + name + "/view", version);
+                    return mod.default;
+                }),
+            });
+            yield renderer.onChangeFrames(initialInfo.page.frames);
+            app.page.on((page) => renderer.onChangeFrames(page.frames));
+            ReactDOM.hydrate(renderer.render(), document.getElementById("root"), () => {
+                logger.log("Hydrate finished");
+            });
+        });
+    }
+}
+exports.default = Bootstrap;
