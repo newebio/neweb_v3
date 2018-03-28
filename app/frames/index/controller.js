@@ -10,23 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const onemitter_1 = require("onemitter");
 class Controller extends onemitter_1.Onemitter {
-    constructor() {
+    constructor(config) {
         super();
         setTimeout(() => {
-            this.emit("HOOO");
+            this.emit(config.params.name);
         }, 5000);
     }
     getInitialData() {
         return __awaiter(this, void 0, void 0, function* () {
-            return "Hello, world";
+            return "Hello, worldmm no";
         });
     }
     action1(value) {
-        this.emit(value + ", dear!");
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                this.emit(value + ", dear!!!!!!");
+                resolve();
+            }, 5000);
+        });
     }
     dispatch(actionName, name) {
         if (actionName === "action1") {
-            this.action1(name);
+            return this.action1(name);
         }
     }
 }

@@ -4,6 +4,7 @@ import { IPackInfo } from "neweb-pack";
 export interface IPage {
     id: string;
     sid: string;
+    url: string;
     frames: IPageFrame[];
 }
 export interface IPageFrame {
@@ -32,6 +33,7 @@ export interface IPageRoute {
     page: IRoutePage;
 }
 export interface IRoutePage {
+    url: string;
     frames: IRoutePageFrame[];
 }
 export interface IRoutePageFrame {
@@ -48,6 +50,7 @@ export interface IUnknownErrorRoute {
 }
 export interface IRouter {
     resolve(req: IRequest): Promise<IRoute>;
+    resolvePage(url: string): Promise<IRoutePage>;
 }
 export interface IApp {
     fillTemplate(html: string, initial: any): Promise<string>;

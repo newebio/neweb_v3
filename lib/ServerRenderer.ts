@@ -23,7 +23,7 @@ class ServerRenderer {
     }
     protected async renderFrame(frame: IPageFrame, children: any) {
         const ViewClass = await this.config.app.requireFrameView(frame.frameName);
-        return React.createElement(ViewClass, { data: frame.data, children });
+        return React.createElement(ViewClass, { params: frame.params, data: frame.data, children });
     }
 }
 export default ServerRenderer;

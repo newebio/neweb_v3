@@ -2,7 +2,7 @@ import { exists, readFile } from "fs";
 import { IPackInfo, ModulePacker } from "neweb-pack";
 import { join, resolve } from "path";
 import { promisify } from "util";
-import { IApp } from "./..";
+import { IApp, IRouter } from "./..";
 import { INITIAL_VAR } from "./../common";
 export interface IAppConfig {
     appDir: string;

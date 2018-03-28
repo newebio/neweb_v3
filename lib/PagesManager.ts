@@ -1,10 +1,11 @@
 import { IFrameActionParams, IInitializeParams, INavigateParams, IRemoteParams } from "../remote";
-import { IApp, IEmitter, ISession } from "./..";
+import { IApp, IEmitter, IRouter, ISession } from "./..";
 import PageController from "./PageController";
 import SessionsManager from "./SessionsManager";
 export interface IServerConfig {
     sessionManager: SessionsManager;
     app: IApp;
+    router: IRouter;
 }
 class PagesManager {
     protected pages: {
@@ -21,6 +22,7 @@ class PagesManager {
         const pageId = params.pid ? params.pid : this.generatePageId();
         const controller = new PageController({
             app: this.config.app,
+            router: this.config.router,
             id: pageId,
             sid: params.session.sid,
         });
@@ -41,6 +43,11 @@ class PagesManager {
             try {
                 const pageController = await this.getPageController(params);
                 await pageController.dispatch(params);
+                client.emit("action-ready", {
+                    actionId: params.actionId,
+                    frameId: params.frameId,
+                    id: params.id,
+                });
             } catch (e) {
                 client.emit("error", "Invalid session");
                 return;

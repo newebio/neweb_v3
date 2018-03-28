@@ -60,7 +60,7 @@ class Renderer {
     protected async createFrameState(frame: IPageFrame): Promise<IFrameState> {
         const data = o({ value: frame.data });
         const view = await this.config.resolveFrameView(frame.frameName, frame.frameVersion, frame.modules);
-        const params = o(frame.params);
+        const params = o({ value: frame.params || {} });
         const children = o();
         const element = React.createElement(Frame, {
             data,

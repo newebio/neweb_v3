@@ -61,7 +61,7 @@ class Renderer {
         return __awaiter(this, void 0, void 0, function* () {
             const data = onemitter_1.default({ value: frame.data });
             const view = yield this.config.resolveFrameView(frame.frameName, frame.frameVersion, frame.modules);
-            const params = onemitter_1.default(frame.params);
+            const params = onemitter_1.default({ value: frame.params || {} });
             const children = onemitter_1.default();
             const element = React.createElement(Frame_1.default, {
                 data,

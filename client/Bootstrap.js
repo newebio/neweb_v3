@@ -48,6 +48,15 @@ class Bootstrap {
             });
             yield renderer.onChangeFrames(initialInfo.page.frames);
             server.on("frame-data", (params) => renderer.newFrameData(params.frameId, params.data));
+            server.on("change-page", (params) => __awaiter(this, void 0, void 0, function* () {
+                history.replaceState({}, "", params.page.url);
+                yield renderer.onChangeFrames(params.page.frames);
+                emitter.emit("navigated", {});
+            }));
+            server.on("frame-params", (params) => __awaiter(this, void 0, void 0, function* () {
+                renderer.newFrameParams(params.frameId, params.params);
+            }));
+            // server.on("navigate", (params:IClientNavigateParams)=>renderer.onChangeFrames())
             ReactDOM.hydrate(renderer.render(), document.getElementById("root"), () => {
                 logger.log("Hydrate finished");
             });

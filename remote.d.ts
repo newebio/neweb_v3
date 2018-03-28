@@ -1,6 +1,6 @@
 import { IRoute, IPage } from ".";
 
-export interface IInitializeParams{
+export interface IInitializeParams {
     page: IPage;
 }
 export interface IRemoteParams {
@@ -13,9 +13,14 @@ export interface INavigateParams {
 }
 export interface IFrameActionParams {
     frameId: string;
+    actionId: string;
     args: any[];
 }
 export interface IFrameDataParams {
     frameId: string;
     data: any;
+}
+export interface IFrameParamsParams {
+    frameId: string;
+    params: any;
 }

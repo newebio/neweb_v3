@@ -1,7 +1,7 @@
 import ReactDOM = require("react-dom");
 import SocketIO = require("socket.io-client");
-import { IInitialInfo, IModule } from "./..";
-import { IFrameDataParams } from "./../remote";
+import { IInitialInfo, IModule, IPage } from "./..";
+import { IFrameDataParams, IFrameParamsParams } from "./../remote";
 import App from "./App";
 import ModulesManager from "./ModulesManager";
 import Renderer from "./Renderer";
@@ -40,6 +40,15 @@ class Bootstrap {
         });
         await renderer.onChangeFrames(initialInfo.page.frames);
         server.on("frame-data", (params: IFrameDataParams) => renderer.newFrameData(params.frameId, params.data));
+        server.on("change-page", async (params: { page: IPage }) => {
+            history.replaceState({}, "", params.page.url);
+            await renderer.onChangeFrames(params.page.frames);
+            emitter.emit("navigated", {});
+        });
+        server.on("frame-params", async (params: IFrameParamsParams) => {
+            renderer.newFrameParams(params.frameId, params.params);
+        });
+        // server.on("navigate", (params:IClientNavigateParams)=>renderer.onChangeFrames())
 
         ReactDOM.hydrate(renderer.render(), document.getElementById("root"), () => {
             logger.log("Hydrate finished");

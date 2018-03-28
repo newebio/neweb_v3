@@ -34,6 +34,7 @@ const sessionManager = new SessionsManager({
 });
 const pageManager = new PagesManager({
     app,
+    router,
     sessionManager,
 });
 const renderer = new ServerRenderer({
