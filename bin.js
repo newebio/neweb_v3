@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const http_1 = require("http");
 const neweb_pack_1 = require("neweb-pack");
 const path_1 = require("path");
+const SocketIOServer = require("socket.io");
 const common_1 = require("./common");
 const App_1 = require("./lib/App");
 const FramesBasedRouter_1 = require("./lib/FramesBasedRouter");
@@ -39,6 +41,9 @@ const pageManager = new PagesManager_1.default({
 const renderer = new ServerRenderer_1.default({
     app,
 });
+const expressApp = express();
+const httpServer = http_1.createServer(expressApp);
+const io = SocketIOServer(httpServer);
 const server = new Server_1.default({
     router,
     app,
@@ -49,7 +54,6 @@ const server = new Server_1.default({
 const modulesServer = new ModulesServer_1.default({
     modulesPath,
 });
-const expressApp = express();
 modulesServer.attach(expressApp);
 expressApp.get("/bundle.js", (_, res) => res.sendFile(path_1.resolve(__dirname + "/dist/bundle.js")));
 expressApp.use(express.static(path_1.join(appDir, "public")));
@@ -62,7 +66,10 @@ expressApp.use(cookieParser(), (req, res) => {
     }, res);
 });
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
-expressApp.listen(port, (err) => {
+io.on("connection", (socket) => {
+    pageManager.onNewClient(socket);
+});
+httpServer.listen(port, (err) => {
     if (err) {
         logger.log(err);
         return;

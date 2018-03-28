@@ -13,6 +13,7 @@ export interface IFrameConfig {
     children: Onemitter<React.ReactNode | undefined>;
     key: any;
     dispatch: (...args: any[]) => void;
+    navigate: (url: string) => void;
 }
 class Frame extends React.Component<IFrameConfig, IState> {
     protected dataEmitter: Onemitter<any>;
@@ -96,6 +97,7 @@ class Frame extends React.Component<IFrameConfig, IState> {
         return React.createElement(this.props.view, {
             data: this.state.data,
             dispatch: this.props.dispatch,
+            navigate: this.props.navigate,
             children: this.state.children,
             params: this.state.params,
         });

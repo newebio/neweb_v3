@@ -34,6 +34,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/react": "^16.0.41",
     "@types/react-dom": "^16.0.4",
+    "@types/socket.io": "^1.4.32",
     "@types/socket.io-client": "^1.4.32",
     "@types/uid-safe": "^2.1.1",
     "cookie-parser": "^1.4.3",
@@ -43,6 +44,7 @@
     "onemitter": "^0.2.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "uid-safe": "^2.1.5",
     "url": "^0.11.0"

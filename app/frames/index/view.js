@@ -4,7 +4,7 @@ const React = require("react");
 class default_1 extends React.Component {
     render() {
         return React.createElement("div", {
-            onClick: () => this.props.dispatch("navigate"),
+            onClick: () => this.props.dispatch("action1", "John"),
         }, ["data::", this.props.data]);
     }
 }

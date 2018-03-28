@@ -23,11 +23,22 @@ class Bootstrap {
             yield modulesManager
                 .preloadModules(initialInfo
                 .page.frames.reduce((prev, curr) => prev.concat(curr.modules), []));
+            const server = SocketIO(window.location.protocol + "//" + window.location.host);
+            const emitter = {
+                emit: (eventName, params) => {
+                    params.sid = initialInfo.page.sid;
+                    params.pid = initialInfo.page.id;
+                    params.id = (+new Date()).toString();
+                    server.emit(eventName, params);
+                },
+                on: server.on.bind(server),
+            };
             const app = new App_1.default({
                 initialPage: initialInfo.page,
-                server: SocketIO(window.location.protocol + "//" + window.location.host),
+                server: emitter,
             });
             const renderer = new Renderer_1.default({
+                navigate: (url) => app.navigate(url),
                 dispatch: (frameId, ...args) => app.dispatchFrameAction(frameId, ...args),
                 resolveFrameView: (name, version, modules) => __awaiter(this, void 0, void 0, function* () {
                     yield modulesManager.preloadModules(modules);
@@ -36,7 +47,7 @@ class Bootstrap {
                 }),
             });
             yield renderer.onChangeFrames(initialInfo.page.frames);
-            app.page.on((page) => renderer.onChangeFrames(page.frames));
+            server.on("frame-data", (params) => renderer.newFrameData(params.frameId, params.data));
             ReactDOM.hydrate(renderer.render(), document.getElementById("root"), () => {
                 logger.log("Hydrate finished");
             });

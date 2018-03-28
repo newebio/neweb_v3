@@ -1,25 +1,47 @@
-import { ModulePacker } from "neweb-pack";
-import { IApp, IEmitter, IPage, IPageFrame, IRoute, IRoutePage, IRoutePageFrame } from "./..";
+import { IApp, IEmitter, IPage, IPageFrame, IRoutePage, IRoutePageFrame } from "./..";
+import { IFrameActionParams, IFrameDataParams } from "./../remote";
 export interface IPageConfig {
     app: IApp;
     id: string;
+    sid: string;
 }
 class PageController {
     protected client?: IEmitter;
     protected currentPage: IPage;
+    protected frames: {
+        [index: string]: {
+            controller: any;
+        };
+    } = {};
     constructor(protected config: IPageConfig) {
     }
-    /*public initialize(client: IEmitter) {
+    public async initialize(client: IEmitter, page: IPage) {
         this.client = client;
-        client.on("navigate", () => this.navigate());
+        client.on("navigate", (url: string) => this.navigate(url));
+
+        await Promise.all(page.frames.map(async (frame) => {
+            const ControllerClass = await this.config.app.requireFrameController(frame.frameName);
+            const controller = new ControllerClass({
+                data: frame.data,
+            });
+            controller.on((value: any) => {
+                const params: IFrameDataParams = { data: value, frameId: frame.frameId };
+                client.emit("frame-data", params);
+            });
+            this.frames[frame.frameId] = { controller };
+        }));
     }
     public navigate(url: string) {
-
-    }*/
+        //
+    }
+    public dispatch(params: IFrameActionParams) {
+        this.frames[params.frameId].controller.dispatch(...params.args);
+    }
     public async resolvePage(routePage: IRoutePage): Promise<IPage> {
         const frames = await Promise.all(routePage.frames.map((frame) => this.resolveFrame(frame)));
         return {
             id: this.config.id,
+            sid: this.config.sid,
             frames,
         };
     }

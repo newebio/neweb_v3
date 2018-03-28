@@ -3,6 +3,7 @@ import { IPackInfo } from "neweb-pack";
 
 export interface IPage {
     id: string;
+    sid: string;
     frames: IPageFrame[];
 }
 export interface IPageFrame {
@@ -70,6 +71,7 @@ export interface ICookie {
 export interface ISession {
     id: string;
     hash: string;
+    sid: string;
 }
 export interface IPageRenderResult {
     html: string;

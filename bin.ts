@@ -1,7 +1,9 @@
 import cookieParser = require("cookie-parser");
 import express = require("express");
+import { createServer } from "http";
 import { ModulePacker } from "neweb-pack";
 import { join, resolve } from "path";
+import SocketIOServer = require("socket.io");
 import { REQUIRE_FUNC_NAME } from "./common";
 import App from "./lib/App";
 import Router from "./lib/FramesBasedRouter";
@@ -37,6 +39,9 @@ const pageManager = new PagesManager({
 const renderer = new ServerRenderer({
     app,
 });
+const expressApp = express();
+const httpServer = createServer(expressApp);
+const io = SocketIOServer(httpServer);
 const server = new Server({
     router,
     app,
@@ -47,7 +52,7 @@ const server = new Server({
 const modulesServer = new ModulesServer({
     modulesPath,
 });
-const expressApp = express();
+
 modulesServer.attach(expressApp);
 expressApp.get("/bundle.js", (_, res) => res.sendFile(resolve(__dirname + "/dist/bundle.js")));
 expressApp.use(express.static(join(appDir, "public")));
@@ -60,7 +65,12 @@ expressApp.use(cookieParser(), (req, res) => {
     }, res);
 });
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
-expressApp.listen(port, (err: any) => {
+
+io.on("connection", (socket) => {
+    pageManager.onNewClient(socket);
+});
+
+httpServer.listen(port, (err: any) => {
     if (err) {
         logger.log(err);
         return;

@@ -66,7 +66,8 @@ class Renderer {
             const element = React.createElement(Frame_1.default, {
                 data,
                 view,
-                dispatch: (...args) => this.config.dispatch(...args),
+                dispatch: (...args) => this.config.dispatch(frame.frameId, ...args),
+                navigate: this.config.navigate,
                 frameId: frame.frameId,
                 params,
                 children,

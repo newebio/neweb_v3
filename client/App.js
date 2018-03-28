@@ -6,7 +6,10 @@ class App {
         this.config = config;
         this.server = this.config.server;
         const initializeParams = {
+            id: (+new Date()).toString(),
             page: this.config.initialPage,
+            sid: this.config.initialPage.sid,
+            pid: this.config.initialPage.id,
         };
         this.page = onemitter_1.default({ value: this.config.initialPage });
         // this.page.emit(this.config.initialPage);
@@ -19,10 +22,12 @@ class App {
         this.server.emit("initialize", initializeParams);
     }
     dispatchFrameAction(frameId, ...args) {
-        this.server.emit("frame-action", frameId, ...args);
+        const params = { frameId, args };
+        this.server.emit("frame-action", params);
     }
     navigate(url) {
-        this.server.emit("navigate");
+        const params = { url };
+        this.server.emit("navigate", params);
     }
 }
 exports.default = App;

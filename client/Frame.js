@@ -76,6 +76,7 @@ class Frame extends React.Component {
         return React.createElement(this.props.view, {
             data: this.state.data,
             dispatch: this.props.dispatch,
+            navigate: this.props.navigate,
             children: this.state.children,
             params: this.state.params,
         });

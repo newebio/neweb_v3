@@ -1,7 +1,6 @@
 import express = require("express");
 import { createReadStream } from "fs";
 import { IPackInfoModule } from "neweb-pack";
-import { IApp } from "./..";
 export interface IModuleServerConfig {
     modulesPath: string;
 }

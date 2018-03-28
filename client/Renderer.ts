@@ -14,6 +14,7 @@ export interface IRendererConfig {
     resolveFrameView: (
         frameName: string, version: string, modules: IModule[]) => Promise<React.ReactElement<any>>;
     dispatch: (...args: any[]) => void;
+    navigate: (url: string) => void;
 }
 class Renderer {
     protected framesStates: IFrameState[] = [];
@@ -64,7 +65,9 @@ class Renderer {
         const element = React.createElement(Frame, {
             data,
             view,
-            dispatch: (...args: any[]) => this.config.dispatch(...args),
+            dispatch: (...args: any[]) =>
+                this.config.dispatch(frame.frameId, ...args),
+            navigate: this.config.navigate,
             frameId: frame.frameId,
             params,
             children,
