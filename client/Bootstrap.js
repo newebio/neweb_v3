@@ -54,6 +54,33 @@ class Bootstrap {
             server.on("change-page", (params) => __awaiter(this, void 0, void 0, function* () {
                 history.replaceState({}, "", params.page.url);
                 yield renderer.onChangeFrames(params.page.frames);
+                if (params.page.title) {
+                    document.title = params.page.title;
+                }
+                const head = document.getElementsByTagName("head")[0];
+                let isStartRemove = false;
+                let metaEndNode;
+                for (const child of head.childNodes) {
+                    if (isStartRemove) {
+                        if (child.nodeType === 8 && child.nodeValue === "__page_meta_end__") {
+                            metaEndNode = child;
+                            break;
+                        }
+                        head.removeChild(child);
+                        continue;
+                    }
+                    if (child.nodeType === 8 && child.nodeValue === "__page_meta_start__") {
+                        isStartRemove = true;
+                    }
+                }
+                if (params.page.meta && params.page.meta.length > 0 && metaEndNode) {
+                    for (const meta of params.page.meta) {
+                        const metaEl = document.createElement("meta");
+                        metaEl.name = meta.name;
+                        metaEl.content = meta.content;
+                        head.insertBefore(metaEl, metaEndNode);
+                    }
+                }
                 emitter.emit("navigated", {});
             }));
             server.on("frame-params", (params) => __awaiter(this, void 0, void 0, function* () {

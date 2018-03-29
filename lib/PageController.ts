@@ -60,6 +60,8 @@ class PageController {
             frames,
             id: this.config.id,
             sid: this.config.sid,
+            meta: page.meta,
+            title: page.title,
         };
         client.emit("change-page", { page: newPage });
     }

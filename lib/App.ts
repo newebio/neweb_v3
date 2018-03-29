@@ -33,8 +33,8 @@ class App implements IApp {
         return template
             .replace("{%html%}", html)
             .replace("{%title%}", meta.title || "")
-            .replace("{%meta%}", meta.meta ? meta.meta.map((m) =>
-                `<meta name="${m.name}" content="${m.content}" />`).join("") : "")
+            .replace("{%meta%}", "<!--__page_meta_start__-->" + (meta.meta ? meta.meta.map((m) =>
+                `<meta name="${m.name}" content="${m.content}" />`).join("") : "") + "<!--__page_meta_end__-->")
             .replace("{%script%}", `
             window["${INITIAL_VAR}"]=${JSON.stringify(initialInfo)}
             `);
