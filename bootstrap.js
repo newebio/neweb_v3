@@ -46,7 +46,9 @@ const renderer = new ServerRenderer_1.default({
 });
 const expressApp = express();
 const httpServer = http_1.createServer(expressApp);
-const io = SocketIOServer(httpServer);
+const io = SocketIOServer(httpServer, {
+    wsEngine: "ws",
+});
 const server = new Server_1.default({
     router,
     app,
