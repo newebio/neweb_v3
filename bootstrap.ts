@@ -21,10 +21,12 @@ const modulePacker = new ModulePacker({
     modulesPath,
     REQUIRE_FUNC_NAME,
 });
+const env = process.env.NODE_ENV === "production" ? "production" : "development";
 const app = new App({
     appDir,
     modulePacker,
     noCache: true,
+    env,
 });
 const router = new Router({
     app,

@@ -2,12 +2,13 @@ import { exists, readFile } from "fs";
 import { IPackInfo, ModulePacker } from "neweb-pack";
 import { join, resolve } from "path";
 import { promisify } from "util";
-import { IApp, IRouter } from "./..";
+import { IApp } from "./..";
 import { INITIAL_VAR } from "./../common";
 export interface IAppConfig {
     appDir: string;
     modulePacker: ModulePacker;
     noCache: boolean;
+    env: "production" | "development";
 }
 class App implements IApp {
     protected template = `<!doctype><html>
@@ -33,6 +34,29 @@ class App implements IApp {
             .replace("%script%", `
             window["${INITIAL_VAR}"]=${JSON.stringify(initialInfo)}
             `);
+    }
+    public getConfig() {
+        const configModule = join(this.config.appDir, "config." + this.config.env);
+        if (this.config.noCache) {
+            delete require.cache[require.resolve(configModule)];
+        }
+        try {
+            return require(configModule).default;
+        } catch (_) {
+            return {};
+        }
+    }
+    public requireContextModule() {
+        const contextModule = join(this.config.appDir, "Context");
+        if (this.config.noCache) {
+            delete require.cache[require.resolve(contextModule)];
+        }
+        try {
+            return require(contextModule).default;
+        } catch (e) {
+            // tslint:disable-next-line:max-classes-per-file
+            return class { };
+        }
     }
     public async resolveFrameViewModule(frameName: string): Promise<IPackInfo> {
         const viewModulePath = join(this.config.appDir, "frames", frameName, "view");

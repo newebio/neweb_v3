@@ -54,7 +54,9 @@ export interface IRouter {
 }
 export interface IApp {
     fillTemplate(html: string, initial: any): Promise<string>;
+    getConfig(): Promise<any>;
     hasFrame(frameName: string): Promise<boolean>;
+    requireContextModule(): Promise<any>;
     resolveFrameViewModule(frameName: string): Promise<IPackInfo>;
     requireFrameController(frameName: string): any;
     requireFrameView(frameName: string): Promise<React.ComponentClass<any>>;

@@ -23,10 +23,12 @@ const modulePacker = new neweb_pack_1.ModulePacker({
     modulesPath,
     REQUIRE_FUNC_NAME: common_1.REQUIRE_FUNC_NAME,
 });
+const env = process.env.NODE_ENV === "production" ? "production" : "development";
 const app = new App_1.default({
     appDir,
     modulePacker,
     noCache: true,
+    env,
 });
 const router = new FramesBasedRouter_1.default({
     app,

@@ -26,11 +26,7 @@ class PageController {
     public async navigated() {
         const page = this.currentPage;
         await Promise.all(page.frames.map(async (frame) => {
-            const ControllerClass = await this.config.app.requireFrameController(frame.frameName);
-            const controller = new ControllerClass({
-                data: frame.data,
-                params: frame.params,
-            });
+            const controller = await this.createController(frame.frameName, frame.params);
             controller.on((value: any) => {
                 const params: IFrameDataParams = { data: value, frameId: frame.frameId };
                 this.client.emit("frame-data", params);
@@ -79,10 +75,7 @@ class PageController {
     }
     public async resolveFrame(frame: IRoutePageFrame): Promise<IPageFrame> {
         const viewModule = await this.config.app.resolveFrameViewModule(frame.name);
-        const ControllerClass = await this.config.app.requireFrameController(frame.name);
-        const controller = new ControllerClass({
-            params: frame.params,
-        });
+        const controller = await this.createController(frame.name, frame.params);
         const data = await controller.getInitialData();
         const frameId = this.generateFrameId();
         const frameName = frame.name;
@@ -96,6 +89,17 @@ class PageController {
             modules,
             params: frame.params,
         };
+    }
+    protected async createController(frameName: string, params: any) {
+        const ControllerClass = await this.config.app.requireFrameController(frameName);
+        const Config = await this.config.app.getConfig();
+        const ContextClass = await this.config.app.requireContextModule();
+        const context = new ContextClass(Config);
+        const controller = new ControllerClass({
+            context,
+            params,
+        });
+        return controller;
     }
     protected generateFrameId() {
         return (+new Date()).toString() + Math.round(Math.random() * 10000).toString();

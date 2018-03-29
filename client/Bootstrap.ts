@@ -39,6 +39,9 @@ class Bootstrap {
             },
         });
         await renderer.onChangeFrames(initialInfo.page.frames);
+        server.on("reconnect", () => {
+
+        });
         server.on("frame-data", (params: IFrameDataParams) => renderer.newFrameData(params.frameId, params.data));
         server.on("change-page", async (params: { page: IPage }) => {
             history.replaceState({}, "", params.page.url);
