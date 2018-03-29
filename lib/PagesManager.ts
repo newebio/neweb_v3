@@ -33,7 +33,7 @@ class PagesManager {
         client.on("navigate", async (params: INavigateParams & IRemoteParams) => {
             try {
                 const pageController = await this.getPageController(params);
-                await pageController.navigate(params.url);
+                await pageController.navigate(params.url, client);
             } catch (e) {
                 client.emit("error", "Invalid session");
                 return;

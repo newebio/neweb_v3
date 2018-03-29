@@ -7,7 +7,6 @@ export interface IPageConfig {
     sid: string;
 }
 class PageController {
-    protected client: IEmitter;
     protected currentPage: IPage;
     protected frames: {
         [index: string]: {
@@ -17,49 +16,50 @@ class PageController {
     constructor(protected config: IPageConfig) {
     }
     public async initialize(client: IEmitter, page: IPage) {
-        this.client = client;
         this.currentPage = page;
         // client.on("navigate", (paramsurl: string) => this.navigate(url));
-        client.on("navigated", () => this.navigated());
-        await this.navigated();
+        client.on("navigated", () => this.navigated(client));
+        await this.navigated(client);
     }
-    public async navigated() {
+    public async navigated(client: IEmitter) {
         const page = this.currentPage;
         await Promise.all(page.frames.map(async (frame) => {
             const controller = await this.createController(frame.frameName, frame.params);
             controller.on((value: any) => {
                 const params: IFrameDataParams = { data: value, frameId: frame.frameId };
-                this.client.emit("frame-data", params);
+                client.emit("frame-data", params);
             });
             this.frames[frame.frameId] = { controller };
         }));
     }
-    public async navigate(url: string) {
+    public async navigate(url: string, client: IEmitter) {
         const routePage = await this.config.router.resolvePage(url);
         const page = await this.resolvePage(routePage);
         const frames: IPageFrame[] = [];
-        for (const [index, frame] of page.frames.entries()) {
-            if (this.currentPage.frames[index].frameName === frame.frameName) {
+        const pageFrames = [...page.frames];
+        pageFrames.forEach((frame, index) => {
+            if (this.currentPage.frames[index] &&
+                this.currentPage.frames[index].frameName === frame.frameName) {
                 if (JSON.stringify(this.currentPage.frames[index].params) !==
                     JSON.stringify(frame.params)) {
                     const params: IFrameParamsParams = {
                         frameId: this.currentPage.frames[index].frameId,
                         params: frame.params,
                     };
-                    this.client.emit("frame-params", params);
+                    client.emit("frame-params", params);
                 }
                 frames.push(this.currentPage.frames[index]);
             } else {
                 frames.push(frame);
             }
-        }
+        });
         const newPage: IPage = {
             url,
             frames,
             id: this.config.id,
             sid: this.config.sid,
         };
-        this.client.emit("change-page", { page: newPage });
+        client.emit("change-page", { page: newPage });
     }
     public async dispatch(params: IFrameActionParams) {
         await this.frames[params.frameId].controller.dispatch(...params.args);
