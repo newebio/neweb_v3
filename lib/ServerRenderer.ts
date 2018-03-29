@@ -12,7 +12,8 @@ class ServerRenderer {
     public async render(page: IPage) {
         let el: any;
         const data = [];
-        for (const pageFrame of page.frames.reverse()) {
+        const frames = [...page.frames];
+        for (const pageFrame of frames.reverse()) {
             el = await this.renderFrame(pageFrame, el);
             data.push(pageFrame.data);
         }

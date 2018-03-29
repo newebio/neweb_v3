@@ -25,9 +25,10 @@ class Renderer {
     }
     onChangeFrames(frames) {
         return __awaiter(this, void 0, void 0, function* () {
-            const framesCount = frames.length;
-            for (const [i, frame] of frames.reverse().entries()) {
-                const index = framesCount - i - 1;
+            // const framesCount = frames.length;
+            for (const [i, frame] of frames.entries()) {
+                // const index = framesCount - i - 1;
+                const index = i;
                 if (!this.framesStates[index] ||
                     frame.frameId !== this.framesStates[index].frameId) {
                     this.disposeFrameState(this.framesStates[index]);
