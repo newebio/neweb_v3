@@ -35,7 +35,8 @@ class Server {
             page,
         };
         res.cookie("sid", session.id + ":" + session.hash);
-        res.status(200).send(await this.config.app.fillTemplate(html, initialInfo));
+        res.status(200).send(await this.config.app.fillTemplate(html,
+            { title: page.title, meta: page.meta }, initialInfo));
     }
 }
 export default Server;

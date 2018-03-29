@@ -48,6 +48,7 @@ class Bootstrap {
             });
             yield renderer.onChangeFrames(initialInfo.page.frames);
             server.on("reconnect", () => {
+                //
             });
             server.on("frame-data", (params) => renderer.newFrameData(params.frameId, params.data));
             server.on("change-page", (params) => __awaiter(this, void 0, void 0, function* () {

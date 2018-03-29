@@ -2,7 +2,7 @@ import { exists, readFile } from "fs";
 import { IPackInfo, ModulePacker } from "neweb-pack";
 import { join, resolve } from "path";
 import { promisify } from "util";
-import { IApp } from "./..";
+import { IApp, IPageMetaInfo } from "./..";
 import { INITIAL_VAR } from "./../common";
 export interface IAppConfig {
     appDir: string;
@@ -12,9 +12,10 @@ export interface IAppConfig {
 }
 class App implements IApp {
     protected template = `<!doctype><html>
-    <head></head><body>
-    <div id="root">%html%</div>
-    <script>%script%</script>
+    <head><title>{%title%}</title>{%meta%}
+    <meta charset="utf8" /></head><body>
+    <div id="root">{%html%}</div>
+    <script>{%script%}</script>
     <script async src="/bundle.js"></script>
     </body></html>`;
     constructor(protected config: IAppConfig) {
@@ -24,14 +25,17 @@ class App implements IApp {
         const viewPath = resolve(join(this.config.appDir, "frames", frameName, "view.js"));
         return promisify(exists)(viewPath);
     }
-    public async fillTemplate(html: string, initialInfo: any) {
+    public async fillTemplate(html: string, meta: IPageMetaInfo, initialInfo: any) {
         const templatePath = join(this.config.appDir, "template.html");
         const template = await promisify(exists)(templatePath) ?
             (await promisify(readFile)(templatePath)).toString()
             : this.template;
         return template
-            .replace("%html%", html)
-            .replace("%script%", `
+            .replace("{%html%}", html)
+            .replace("{%title%}", meta.title || "")
+            .replace("{%meta%}", meta.meta ? meta.meta.map((m) =>
+                `<meta name="${m.name}" content="${m.content}" />`).join("") : "")
+            .replace("{%script%}", `
             window["${INITIAL_VAR}"]=${JSON.stringify(initialInfo)}
             `);
     }

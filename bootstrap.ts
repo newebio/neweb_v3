@@ -8,6 +8,7 @@ import { REQUIRE_FUNC_NAME } from "./common";
 import App from "./lib/App";
 import Router from "./lib/FramesBasedRouter";
 import ModulesServer from "./lib/ModulesServer";
+import PageMetaGenerator from "./lib/PageMetaGenerator";
 import PagesManager from "./lib/PagesManager";
 import Server from "./lib/Server";
 import ServerRenderer from "./lib/ServerRenderer";
@@ -34,10 +35,12 @@ const router = new Router({
 const sessionManager = new SessionsManager({
     sessionsPath: join(appDir, "sessions"),
 });
+const pageMetaGenerator = new PageMetaGenerator();
 const pageManager = new PagesManager({
     app,
     router,
     sessionManager,
+    pageMetaGenerator,
 });
 const renderer = new ServerRenderer({
     app,

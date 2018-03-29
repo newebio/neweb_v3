@@ -1,11 +1,13 @@
 import { IFrameActionParams, IInitializeParams, INavigateParams, IRemoteParams } from "../remote";
 import { IApp, IEmitter, IRouter, ISession } from "./..";
 import PageController from "./PageController";
+import PageMetaGenerator from "./PageMetaGenerator";
 import SessionsManager from "./SessionsManager";
 export interface IServerConfig {
     sessionManager: SessionsManager;
     app: IApp;
     router: IRouter;
+    pageMetaGenerator: PageMetaGenerator;
 }
 class PagesManager {
     protected pages: {
@@ -23,6 +25,7 @@ class PagesManager {
         const controller = new PageController({
             app: this.config.app,
             router: this.config.router,
+            pageMetaGenerator: this.config.pageMetaGenerator,
             id: pageId,
             sid: params.session.sid,
         });

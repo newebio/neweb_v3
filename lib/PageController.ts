@@ -1,8 +1,10 @@
 import { IApp, IEmitter, IPage, IPageFrame, IRoutePage, IRoutePageFrame, IRouter } from "./..";
 import { IFrameActionParams, IFrameDataParams, IFrameParamsParams } from "./../remote";
+import PageMetaGenerator from "./PageMetaGenerator";
 export interface IPageConfig {
     app: IApp;
     router: IRouter;
+    pageMetaGenerator: PageMetaGenerator;
     id: string;
     sid: string;
 }
@@ -66,12 +68,14 @@ class PageController {
     }
     public async resolvePage(routePage: IRoutePage): Promise<IPage> {
         const frames = await Promise.all(routePage.frames.map((frame) => this.resolveFrame(frame)));
-        return {
+        const page = {
             id: this.config.id,
             url: routePage.url,
             sid: this.config.sid,
             frames,
         };
+        const meta = await this.config.pageMetaGenerator.generate(page);
+        return { ...page, ...meta };
     }
     public async resolveFrame(frame: IRoutePageFrame): Promise<IPageFrame> {
         const viewModule = await this.config.app.resolveFrameViewModule(frame.name);

@@ -1,11 +1,19 @@
 import { IncomingHttpHeaders } from "http";
 import { IPackInfo } from "neweb-pack";
 
-export interface IPage {
+export interface IPage extends IPageMetaInfo {
     id: string;
     sid: string;
     url: string;
     frames: IPageFrame[];
+}
+export interface IPageMetaInfo {
+    title?: string;
+    meta?: IPageMeta[];
+}
+export interface IPageMeta {
+    name: string;
+    content: string;
 }
 export interface IPageFrame {
     frameId: string;
@@ -53,7 +61,7 @@ export interface IRouter {
     resolvePage(url: string): Promise<IRoutePage>;
 }
 export interface IApp {
-    fillTemplate(html: string, initial: any): Promise<string>;
+    fillTemplate(html: string, meta: IPageMetaInfo, initial: any): Promise<string>;
     getConfig(): Promise<any>;
     hasFrame(frameName: string): Promise<boolean>;
     requireContextModule(): Promise<any>;

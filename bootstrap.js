@@ -10,6 +10,7 @@ const common_1 = require("./common");
 const App_1 = require("./lib/App");
 const FramesBasedRouter_1 = require("./lib/FramesBasedRouter");
 const ModulesServer_1 = require("./lib/ModulesServer");
+const PageMetaGenerator_1 = require("./lib/PageMetaGenerator");
 const PagesManager_1 = require("./lib/PagesManager");
 const Server_1 = require("./lib/Server");
 const ServerRenderer_1 = require("./lib/ServerRenderer");
@@ -36,10 +37,12 @@ const router = new FramesBasedRouter_1.default({
 const sessionManager = new SessionsManager_1.default({
     sessionsPath: path_1.join(appDir, "sessions"),
 });
+const pageMetaGenerator = new PageMetaGenerator_1.default();
 const pageManager = new PagesManager_1.default({
     app,
     router,
     sessionManager,
+    pageMetaGenerator,
 });
 const renderer = new ServerRenderer_1.default({
     app,
