@@ -4,6 +4,7 @@ import PageMetaGenerator from "./PageMetaGenerator";
 export interface IPageConfig {
     app: IApp;
     router: IRouter;
+    context: any;
     pageMetaGenerator: PageMetaGenerator;
     id: string;
     sid: string;
@@ -98,11 +99,11 @@ class PageController {
     }
     protected async createController(frameName: string, params: any) {
         const ControllerClass = await this.config.app.requireFrameController(frameName);
-        const Config = await this.config.app.getConfig();
-        const ContextClass = await this.config.app.requireContextModule();
-        const context = new ContextClass(Config);
+        /*        const Config = await this.config.app.getConfig();
+                const ContextClass = await this.config.app.requireContextModule();
+                const context = new ContextClass(Config);*/
         const controller = new ControllerClass({
-            context,
+            context: this.config.context,
             params,
         });
         return controller;

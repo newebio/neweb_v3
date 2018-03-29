@@ -31,6 +31,9 @@ const app = new App_1.default({
     noCache: true,
     env,
 });
+const config = app.getConfig();
+const ContextClass = app.requireContextModule();
+const context = new ContextClass(config);
 const router = new FramesBasedRouter_1.default({
     app,
 });
@@ -41,6 +44,7 @@ const pageMetaGenerator = new PageMetaGenerator_1.default();
 const pageManager = new PagesManager_1.default({
     app,
     router,
+    context,
     sessionManager,
     pageMetaGenerator,
 });

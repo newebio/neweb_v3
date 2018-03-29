@@ -29,6 +29,9 @@ const app = new App({
     noCache: true,
     env,
 });
+const config = app.getConfig();
+const ContextClass = app.requireContextModule();
+const context = new ContextClass(config);
 const router = new Router({
     app,
 });
@@ -39,6 +42,7 @@ const pageMetaGenerator = new PageMetaGenerator();
 const pageManager = new PagesManager({
     app,
     router,
+    context,
     sessionManager,
     pageMetaGenerator,
 });

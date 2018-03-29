@@ -6,6 +6,7 @@ import SessionsManager from "./SessionsManager";
 export interface IServerConfig {
     sessionManager: SessionsManager;
     app: IApp;
+    context: any;
     router: IRouter;
     pageMetaGenerator: PageMetaGenerator;
 }
@@ -27,6 +28,7 @@ class PagesManager {
             router: this.config.router,
             pageMetaGenerator: this.config.pageMetaGenerator,
             id: pageId,
+            context: this.config.context,
             sid: params.session.sid,
         });
         this.pages[pageId] = { controller, sid: params.session.sid };
