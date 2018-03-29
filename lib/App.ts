@@ -37,10 +37,10 @@ class App implements IApp {
     }
     public getConfig() {
         const configModule = join(this.config.appDir, "config." + this.config.env);
-        if (this.config.noCache) {
-            delete require.cache[require.resolve(configModule)];
-        }
         try {
+            if (this.config.noCache) {
+                delete require.cache[require.resolve(configModule)];
+            }
             return require(configModule).default;
         } catch (_) {
             return {};
@@ -48,10 +48,10 @@ class App implements IApp {
     }
     public requireContextModule() {
         const contextModule = join(this.config.appDir, "Context");
-        if (this.config.noCache) {
-            delete require.cache[require.resolve(contextModule)];
-        }
         try {
+            if (this.config.noCache) {
+                delete require.cache[require.resolve(contextModule)];
+            }
             return require(contextModule).default;
         } catch (e) {
             // tslint:disable-next-line:max-classes-per-file
